@@ -1,71 +1,66 @@
 <template>
-    <section class="projeto">
-        <h1 class="title">Projetos</h1>
-        <form @submit.prevent="salvar"> <!--Ouvir o comportamento padrão já ouvindo o comportamento de submeter e recarregar a página-->
-            <div class="field">
-                <label for="" class="label">Nome do Projeto</label>
-                <input type="text" class="input" v-model="nomeDoProjeto" id="nomeDoProjeto">
-            </div>
-            <div class="field">
-                <button class="button" type="submit">Salvar</button>
-            </div>
-        </form>
-        <table class="table is-fullwidth">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="projeto in projetos" :key="projeto.id">
-                    <td>{{ projeto.id }}</td>
-                    <td>{{ projeto.nome }}</td>
-                </tr>
-            </tbody>
-        </table>
+    <section>
+      <form @submit.prevent="salvar">
+        <div class="field">
+          <label for="nomeDoProjeto" class="label"> Nome do Projeto </label>
+          <input
+            type="text"
+            class="input"
+            v-model="nomeDoProjeto"
+            id="nomeDoProjet"
+          />
+        </div>
+        <div class="field">
+          <button class="button" type="submit">Salvar</button>
+        </div>
+      </form>
     </section>
-</template>
-
-
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
-import { useStore } from '@/store';
-
-export default defineComponent({
-    name: 'FormView',
+  </template>
+  
+  <script lang="ts">
+  import { useStore } from "@/store";
+  import { defineComponent } from "vue";
+  
+  import { ALTERA_PROJETO, ADICIONA_PROJETO } from '@/store/tipo-mutacoes'
+  
+  export default defineComponent({
+    name: "FormularioView",
     props: {
-        id: {
-            type: String 
-        }
+      id: {
+        type: String
+      }
     },
-    mounted() {
-
+    mounted () {
+      if(this.id) {
+        const projeto = this.store.state.projetos.find(proj => proj.id == this.id)
+        this.nomeDoProjeto = projeto?.nome || ''
+      }
     },
     data() {
-        return {
-            nomeDoProjeto: ""
-        }
+      return {
+        nomeDoProjeto: ""
+      };
     },
     methods: {
-        salvar() {
-            this.store.commit('ADICIONA_PROJETO', this.nomeDoProjeto)
-            this.nomeDoProjeto = ""
-            this.$router.push('/projetos')
+      salvar() {
+        if (this.id) {
+          this.store.commit(ALTERA_PROJETO, {
+            id: this.id,
+            nome: this.nomeDoProjeto
+          })
+        } else {
+          this.store.commit(ADICIONA_PROJETO, this.nomeDoProjeto)
         }
+        this.nomeDoProjeto = "";
+        this.$router.push('/projetos')
+      },
     },
-    setup() {
-        const store = useStore()
-        return {
-            store,
-            projetos: computed(() => store.state.projetos)
-        }
+    setup () {
+      const store = useStore()
+      return {
+        store
+      }
     }
-})
-</script>
-
-<style scoped>
-.projeto {
-    padding: 1.25rem;
-}
-</style>
+  });
+  </script>
+  

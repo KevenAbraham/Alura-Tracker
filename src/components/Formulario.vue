@@ -38,7 +38,7 @@ import { useStore } from 'vuex'
 import { key } from '@/store'
 
 export default defineComponent({
-  name: "FormularioForm",
+  name: "FormularioView",
   emits: ['aoSalvarTarefa'],
   components: {
     Temporizador,
