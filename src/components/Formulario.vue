@@ -62,8 +62,6 @@ export default defineComponent({
     }
 
     return {
-      descricao,
-      idProjeto,
       projetos,
       salvarTarefa
     }
