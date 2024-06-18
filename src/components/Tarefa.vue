@@ -5,7 +5,7 @@
         {{ tarefa.descricao || 'Tarefa sem descrição' }}
       </div>
       <div class="column is-3">
-        {{  tarefa.projeto?.nome || 'N/D' }}
+        {{ tarefa.projeto?.nome || 'N/D' }}
       </div>
       <div class="column">
         <Cronometro :tempoEmSegundos="tarefa.duracaoEmSegundos"/>
@@ -15,41 +15,42 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 import Cronometro from "./Cronometro.vue";
 import Box from "./Box.vue";
 import ITarefa from "../interfaces/ITarefa";
 
 export default defineComponent({
   name: 'TarefaView',
+  emits: ['aoTarefaClicada'],
   components: {
     Cronometro,
     Box
   },
-  emits: ['aoTarefaClicada'],
   props: {
     tarefa: {
       type: Object as PropType<ITarefa>,
       required: true
     }
   },
-  methods: {
-    tarefaClicada() : void {
-      this.$emit('aoTarefaClicada', this.tarefa)
+  setup(props, { emit }) {
+    const tarefaClicada = () : void => {
+      emit('aoTarefaClicada', props.tarefa)
     }
-  },
-  computed: {
-    tempoGasto () : string {
-      return new Date(this.tarefa.duracaoEmSegundos * 1000)
+    const tempoGasto = computed(() => {
+      return new Date(props.tarefa.duracaoEmSegundos * 1000)
         .toISOString()
         .substr(11, 8)
+    })
+    return {
+      tarefaClicada,
+      tempoGasto
     }
   }
 });
 </script>
-
 <style scoped>
 .clicavel {
-  cursor: pointer
+  cursor: pointer;
 }
 </style>
